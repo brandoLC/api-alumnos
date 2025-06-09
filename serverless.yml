@@ -1,0 +1,70 @@
+org: brandolc18
+service: api-alumnos
+
+provider:
+  name: aws
+  runtime: python3.12
+  timeout: 30  
+  iam:
+    role: arn:aws:iam::248056481657:role/LabRole
+
+functions:
+  listar:
+    handler: ListarAlumnos.lambda_handler
+    events:
+      - http:
+          path: /alumnos/listar
+          method: post
+          cors: true
+          integration: lambda
+  crear:
+    handler: CrearAlumno.lambda_handler
+    events:
+      - http:
+          path: /alumnos/crear
+          method: post
+          cors: true
+          integration: lambda
+  obtener:
+    handler: ObtenerAlumno.lambda_handler
+    events:
+      - http:
+          path: /alumnos/obtener
+          method: post
+          cors: true
+          integration: lambda
+  actualizar:
+    handler: ActualizarAlumno.lambda_handler
+    events:
+      - http:
+          path: /alumnos/actualizar
+          method: post
+          cors: true
+          integration: lambda
+  eliminar:
+    handler: EliminarAlumno.lambda_handler
+    events:
+      - http:
+          path: /alumnos/eliminar
+          method: post
+          cors: true
+          integration: lambda
+
+resources:
+  Resources:
+    AlumnosTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: t_alumnos
+        AttributeDefinitions:
+          - AttributeName: tenant_id
+            AttributeType: S
+          - AttributeName: alumno_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: tenant_id
+            KeyType: HASH
+          - AttributeName: alumno_id
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+
